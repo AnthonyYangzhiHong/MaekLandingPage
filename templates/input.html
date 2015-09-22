@@ -1,0 +1,290 @@
+<html>
+<head>
+<link rel="stylesheet" style="text/css" href="assets/main.css" /> 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script>
+	$(function() {
+		$( "#slider" ).slider({
+			orientation: "horizontal",
+			range: "min",
+			max: 100,
+			value: 50,
+			slide: ZoomInOut
+		});
+	});
+
+</script>
+<script>
+//$("#userInput").on("keypress", function (){
+//	    	$('#userInput').css({
+//			'color' : 'blue'
+//			});
+//});
+function FocusOnInput()
+ {
+ document.getElementById("userInput").focus();
+ }
+$(document).ready(function(){
+	var CVS=document.createElement('canvas'),
+		ctx=CVS.getContext('2d');
+		
+	CVS.width=500;
+	CVS.height=500;
+	CVS.id="mycanvas";
+	
+	document.getElementById('canvas-container').appendChild(CVS);
+	
+	function sendToCanvas(obj){
+		//ctx.clearRect(0, 0, 500, 500);
+		var img=new Image();
+		img.onload=function(){
+			ctx.drawImage(img, 0, 0,500,500);
+			//ctx.font = obj.fontWeight+' '+obj.fontSize+' '+obj.fontFamily;
+			//ctx.textAlign = 'center';
+			//var textimg=new Image();
+			//var textimg=document.getElementById("textbackground");
+			
+			//var pat=ctx.createPattern(textimg,"no-repeat");
+			//ctx.fillStyle = pat;
+			//console.log("pattern created");
+			//ctx.fillRect(0,300,500,200);
+			//console.log("rect filled");
+			
+			//ctx.fillText(obj.text, CVS.width/2, CVS.height/1.1);
+		};
+		img.src=obj.image;
+		/*var textimg=new Image();
+		textimg.onload=function(){
+			ctx.font = obj.fontWeight+' '+obj.fontSize+' '+obj.fontFamily;
+			ctx.textAlign = 'center';
+			var pat=ctx.createPattern(textimg,"repeat");
+			console.log(obj.text);
+			ctx.fillStyle=pat;
+			//ctx.fillRect(0,0,500,200);
+			ctx.fillText(obj.text, CVS.width/2, CVS.height/1.1);
+		}
+		textimg.src="assets/pattern-grime.jpg";*/
+	};
+	
+	var cvsObj={
+		image      : "assets/logo-frame-2x.png",
+		text       : "",
+		fontFamily : "Arial",
+		fontWeight : "bold",
+		fontSize   : "6.0em",
+		
+	};
+	sendToCanvas(cvsObj);
+	
+	/*$('input').on("input", function(){
+	cvsObj.text = this.value ;
+	console.log(this.value);
+	sendToCanvas( cvsObj );
+	});*/
+	document.getElementById('userInput').addEventListener('input',showFileUpload);
+	document.getElementById('file').addEventListener('change',handleFileSelect,false);
+	document.getElementById('mycanvas').addEventListener('mousedown',mouseDownListener,false);
+	//console.log(document.getElementById('userInput').value);
+	//$('userInput').on('input',showFileUpload());
+});
+
+
+</script>
+</head>
+<body onload="FocusOnInput()">
+	<div id="canvas-container">
+		<div class="text-area">
+			<input maxlength="15" type="text" id="userInput">
+			<img id="textbackground" src="assets/maek-logo.png"></img>
+			<img id="straightoutta_watermark" src="assets/logo-frame-2x.png" width="300" height="300"></img>
+			<img id="maek_logo" src="assets/maek-logo.png"></img>
+		</div>
+		
+		<div id="dialog" title="AWESOME!">
+  			<p>Your image was successfully saved.</p>
+		</div>
+		
+	</div>
+	<div id="editor-actions">
+		<img src="assets/button.png" id="upload_button"></img>
+		<input type="file" id="file">
+		<!--<input id="upload" type="file">-->
+	</div>
+
+	<div id="slider">
+
+	</div>
+	<script>
+	/************************************************
+	REMOVES INPUT TEXT AND JUST SHOWS THE CANVAS TEXT
+	*************************************************/
+	/*$("#userInput").one("keypress", function () 
+		{
+	    	$('#userInput').css('color','rgba(0,0,0,0)');
+		});*/
+		var scale;
+		var width_modified;
+		var height_modified;
+		var centerX;
+		var centerY;
+		var centerX_range_min;
+		var centerX_range_max;
+		var centerY_range_min;
+		var centerY_range_max;
+		var text;
+		
+		var mouseStartX;
+		var mouseStartY;
+	
+		var Xdistance;
+		var Ydistance;
+		
+		function redraw(image,xtopleft,ytopleft,width,height){
+		var canvas=document.querySelector('canvas');
+		var ctx=canvas.getContext("2d");
+		ctx.drawImage(image,xtopleft,ytopleft,width,height);
+		
+		}
+		
+		function drawText(){
+			var canvas_text=text;
+			console.log(text+'from function call')
+			
+			var canvas=document.querySelector('canvas');
+			var ctx=canvas.getContext("2d");
+			textimg=new Image();
+			textimg.src="assets/pattern-grime.jpg";
+			textimg.onload=function(){
+				var pat=ctx.createPattern(textimg,"repeat");
+				ctx.fillStyle=pat;
+				ctx.font = '800'+' '+'3.5em'+' '+'Arial';
+				ctx.textAlign = 'center';
+				ctx.fillText(canvas_text, canvas.width/2, canvas.height/1.32);
+			}
+			
+		}
+		
+		function handleFileSelect(evt){
+		var file=evt.target.files[0];
+		
+		var reader=new FileReader();
+		reader.onload=function(fileObject){
+			var data=fileObject.target.result;
+			 
+			image=new Image();
+			image.onload=function(){
+				text=document.getElementById('userInput').value;
+				console.log(text);
+				$('#userInput').remove();
+				$('.text-area').css("display","none");
+				var width = this.width;
+				var height = this.height;
+				
+				width_modified=width*700/height;
+				height_modified=700;
+				
+				centerX=250;
+				centerY=250;
+				
+				centerX_range_min=500-width_modified/2;
+				centerX_range_max=width_modified/2;
+				centerY_range_min=500-height_modified/2;
+				centerY_range_max=height_modified/2;
+				
+				scale=50;
+				//console.log(width);
+				//console.log(height);
+				//console.log(centerX-width_modified/2);
+				//console.log(centerY-350);
+				//console.log(centerX+width_modified/2);
+				//console.log(centerY+350);
+				//text=document.getElementById('userInput').value;
+				//console.log(text);
+				redraw(this,centerX-width_modified/2,centerY-height_modified/2,width_modified,height_modified);
+				
+				watermark=document.getElementById('straightoutta_watermark');
+				redraw(watermark,100,100,300,300);
+				
+				maeklogo=document.getElementById('maek_logo');
+				redraw(maeklogo,215,405,70,40);
+				console.log(text);
+				drawText();
+				$('#slider').css("display","block");
+				$('#file').css("display","none");
+				$('#upload_button').css("display","none");
+			}
+			image.src=data;
+		}
+		reader.readAsDataURL(file)
+	}
+	
+	function mouseMoveListener(evt){
+			var mouseCurrentX=evt.clientX;
+			var mouseCurrentY=evt.clientY;
+			
+			//var dragX=mouseCurrentX-mouseStartX;
+			//var dragY=mouseCurrentY-mouseStartY;
+			centerX=mouseCurrentX-Xdistance;
+			if(centerX>centerX_range_max){
+				centerX=centerX_range_max;
+			}
+			else if(centerX<centerX_range_min){
+				centerX=centerX_range_min;
+			}
+			centerY=mouseCurrentY-Ydistance;
+			if(centerY>centerY_range_max){
+				centerY=centerY_range_max;
+			}
+			else if(centerY<centerY_range_min){
+				centerY=centerY_range_min;
+			}
+			
+			//console.log(centerX);
+			//console.log(dragX);
+			redraw(image,centerX-width_modified/2,centerY-height_modified/2,width_modified,height_modified);
+			redraw(watermark,100,100,300,300);
+			redraw(maeklogo,215,405,70,40);
+			drawText();
+		}
+		
+	function mouseUpListener(evt){
+		document.getElementById('mycanvas').removeEventListener('mousemove',mouseMoveListener,false);
+		document.getElementById('mycanvas').removeEventListener('mouseup',mouseUpListener,false);
+	}
+	
+	function mouseDownListener(evt){
+		mouseStartX=evt.clientX;
+		mouseStartY=evt.clientY;
+		
+		Xdistance=mouseStartX-centerX;
+		Ydistance=mouseStartY-centerY;
+
+		document.getElementById('mycanvas').addEventListener('mousemove',mouseMoveListener,false);
+		document.getElementById('mycanvas').addEventListener('mouseup',mouseUpListener,false);
+	}
+	
+	
+	function ZoomInOut(){
+		var scale_new=$("#slider").slider("value");
+		width_modified=width_modified*scale_new/scale;
+		height_modified=height_modified*scale_new/scale;
+		scale=scale_new;
+		redraw(image,centerX-width_modified/2,centerY-height_modified/2,width_modified,height_modified);
+		redraw(watermark,100,100,300,300);
+		redraw(maeklogo,215,405,70,40);
+		drawText();
+		
+		console.log(scale);
+		console.log(width_modified);
+		console.log(height_modified);
+	}
+	
+	function showFileUpload(){
+		$('#file').css("display","inline");
+		$('#upload_button').css("display","inline");
+	}
+	</script>
+</body>
+</html>
