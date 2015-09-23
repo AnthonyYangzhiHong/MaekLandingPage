@@ -2,20 +2,9 @@
 <head>
 <link rel="stylesheet" style="text/css" href="assets/main.css" /> 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-<script>
-	$(function() {
-		$( "#slider" ).slider({
-			orientation: "horizontal",
-			range: "min",
-			max: 100,
-			value: 50,
-			slide: ZoomInOut
-		});
-	});
 
-</script>
+
+
 <script>
 //$("#userInput").on("keypress", function (){
 //	    	$('#userInput').css({
@@ -106,6 +95,7 @@ $(document).ready(function(){
   			<p>Your image was successfully saved.</p>
 		</div>
 		
+		
 	</div>
 	<div id="editor-actions">
 		<img src="assets/button.png" id="upload_button"></img>
@@ -113,9 +103,11 @@ $(document).ready(function(){
 		<!--<input id="upload" type="file">-->
 	</div>
 
-	<div id="slider">
+	<!--<div id="slider">
 
-	</div>
+	</div>-->
+	<input type="range" id="slider" oninput="ZoomInOut()">
+	<!--<button id="dlbtn" onclick="saveAsLocalImg()">Download</button>-->
 	<script>
 	/************************************************
 	REMOVES INPUT TEXT AND JUST SHOWS THE CANVAS TEXT
@@ -267,7 +259,8 @@ $(document).ready(function(){
 	
 	
 	function ZoomInOut(){
-		var scale_new=$("#slider").slider("value");
+		//var scale_new=$("#slider").slider("value");
+		var scale_new=document.getElementById('slider').value;
 		width_modified=width_modified*scale_new/scale;
 		height_modified=height_modified*scale_new/scale;
 		scale=scale_new;
@@ -284,6 +277,12 @@ $(document).ready(function(){
 	function showFileUpload(){
 		$('#file').css("display","inline");
 		$('#upload_button').css("display","inline");
+	}
+	
+	function saveAsLocalImg(){
+		var cvs=document.getElementById("mycanvas");
+		var img=cvs.toDataURL("image/png").replace("image/png", "image/octet-stream"); 
+		window.location.href=img;
 	}
 	</script>
 </body>
