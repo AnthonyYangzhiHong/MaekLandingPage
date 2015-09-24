@@ -106,8 +106,11 @@ $(document).ready(function(){
 	<!--<div id="slider">
 
 	</div>-->
-	<input type="range" id="slider" oninput="ZoomInOut()">
-	<!--<button id="dlbtn" onclick="saveAsLocalImg()">Download</button>-->
+	<div>
+		<input type="range" id="slider" oninput="ZoomInOut()">
+		<img src="assets/download-btn.png" id="download_button"></img>
+		<button id="dlbtn" onclick="saveAsLocalImg()">Download</button>
+	</div>
 	<script>
 	/************************************************
 	REMOVES INPUT TEXT AND JUST SHOWS THE CANVAS TEXT
@@ -206,6 +209,9 @@ $(document).ready(function(){
 				$('#slider').css("display","block");
 				$('#file').css("display","none");
 				$('#upload_button').css("display","none");
+				$('#dlbtn').css("display","block");
+				$('#download_button').css("display","block");
+				$('#mycanvas').css("cursor","move");
 			}
 			image.src=data;
 		}
